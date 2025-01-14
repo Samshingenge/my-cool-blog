@@ -1,30 +1,35 @@
 import prisma from "@/app/lib/db";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
-type Props = {
-  params: {
-    slug: string;
-  };
-};
-
-// Add 'generateStaticParams' for static generation (optional but recommended)
-export async function generateStaticParams() {
-  const posts = await prisma.post.findMany({
-    select: {
-      slug: true,
-    },
-  });
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+// Use Next.js built-in types
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+    return {
+        title: `Post - ${params.slug}`,
+    };
 }
 
-export default async function PostPage({ params }: Props) {
+export async function generateStaticParams() {
+    const posts = await prisma.post.findMany({
+        select: {
+            slug: true,
+        },
+    });
+
+    return posts.map((post) => ({
+        slug: post.slug,
+    }));
+}
+
+export default async function PostPage({
+    params,
+}: {
+    params: { slug: string };
+}) {
     const post = await prisma.post.findUnique({
         where: {
             slug: params.slug,
-        }
+        },
     });
 
     if (!post) {
