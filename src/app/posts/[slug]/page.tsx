@@ -2,7 +2,13 @@ import prisma from "@/app/lib/db";
 import { notFound } from "next/navigation";
 
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
+export default async function PostPage({ 
+    params,
+ }: { 
+    params: { 
+        slug: string; 
+    };
+ }) {
     const post = await prisma.post.findUnique({
         where: {
             slug: params.slug,
